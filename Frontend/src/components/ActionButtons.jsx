@@ -1,6 +1,6 @@
 function ActionButton(props){
     return(
-        <button>{props.fill}</button>
+        <button className="action-btn">{props.fill}</button>
     )
 }
 

@@ -20,13 +20,15 @@ function InputBox(){
                 <ActionButton id="keypoints" fill="Key Points" />
                 <ActionButton id="quiz" fill="Generate Quiz" />
 
-                <select className="level-select" onChange={(e) => handleLevelChange(e.target.value)}>
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                </select>
+                <div className="explain-control">
+                    <select className="level-select" onChange={(e) => handleLevelChange(e.target.value)}>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
 
-                <ActionButton id={level} fill="Explain" />
+                    <ActionButton id={level} fill="Explain" />
+                </div>
             </div>
         </div>
     )

@@ -1,24 +1,42 @@
 import { useState } from "react"
 import ActionButton from "./ActionButtons"
+import { get_output } from "../services/aiService";
 
 function InputBox(){
-
-    const [level, setlevel] = useState("beginner");
+    
+    const [notes, setNotes] = useState("");
+    const [level, setLevel] = useState("beginner");
+    const [output, setOutput] = useState("");
 
     function handleLevelChange(value) {
-        setlevel(value)
+        setLevel(value)
+    }
+
+    function handleOutputGeneration(type) {
+        if (!notes.trim()) {
+            alert("Please enter some notes first");
+            return;
+        }
+
+        setOutput(get_output(notes, type));
+            
+    }
+
+
+    function handleActionClick(type) {
+        handleOutputGeneration(type);
     }
 
     return(
         <div className="box">
             <h2>Input Notes</h2>
 
-            <textarea className="notes" placeholder="Paste your notes here"></textarea>
+            <textarea className="notes" placeholder="Paste your notes here" value={notes} onChange={(e) => setNotes(e.target.value)}></textarea>
 
             <div className="controls">
-                <ActionButton id="summary" fill="Generate Summary" />
-                <ActionButton id="keypoints" fill="Key Points" />
-                <ActionButton id="quiz" fill="Generate Quiz" />
+                <ActionButton type="summary" fill="Generate Summary" onClickAction={handleActionClick} />
+                <ActionButton type="keypoints" fill="Key Points" onClickAction={handleActionClick} />
+                <ActionButton type="quiz" fill="Generate Quiz" onClickAction={handleActionClick} />
 
                 <div className="explain-control">
                     <select className="level-select" onChange={(e) => handleLevelChange(e.target.value)}>
@@ -27,7 +45,7 @@ function InputBox(){
                         <option value="advanced">Advanced</option>
                     </select>
 
-                    <ActionButton id={level} fill="Explain" />
+                    <ActionButton type={level} fill="Explain" onClickAction={handleActionClick} />
                 </div>
             </div>
         </div>

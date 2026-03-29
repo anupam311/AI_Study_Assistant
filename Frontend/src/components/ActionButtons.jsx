@@ -1,6 +1,8 @@
 function ActionButton(props){
     return(
-        <button className="action-btn">{props.fill}</button>
+        <button className="action-btn" onClick={() => props.onClickAction(props.type)}>
+            {props.fill}
+        </button>
     )
 }
 

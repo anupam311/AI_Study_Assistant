@@ -1,7 +1,71 @@
 import StorageTab from "./StorageTab";
 import StoragePanel from "./StoragePanel";
+import { useState, useEffect } from "react";
 
 function OutputBox({type, outputs}) {
+
+    const [hiddenPanels, setHiddenPanels] = useState({
+            summary: true,
+            keypoints: true,
+            quiz: true,
+            beginner: true,
+            intermediate: true,
+            advanced: true,
+        });
+
+    const [hiddenTabs, setHiddenTabs] = useState({
+            summary: true,
+            keypoints: true,
+            quiz: true,
+            beginner: true,
+            intermediate: true,
+            advanced: true,
+        });
+
+    const [activeTabs, setActiveTabs] = useState({
+            summary: false,
+            keypoints: false,
+            quiz: false,
+            beginner: false,
+            intermediate: false,
+            advanced: false,
+        });
+
+    useEffect(() => {
+        setHiddenPanels({
+            summary: true,
+            keypoints: true,
+            quiz: true,
+            beginner: true,
+            intermediate: true,
+            advanced: true,
+        });
+
+        setHiddenPanels(prev => ({
+            ...prev,
+            [type]: false
+        }));
+
+        setHiddenTabs(prev => ({
+            ...prev,
+            [type]: false
+        }));
+
+        setActiveTabs({
+            summary: false,
+            keypoints: false,
+            quiz: false,
+            beginner: false,
+            intermediate: false,
+            advanced: false
+        });
+
+        setActiveTabs(prev => ({
+            ...prev,
+            [type]: true
+        }));
+
+    }, [type])
 
     return(
         <div className="box">
@@ -16,21 +80,21 @@ function OutputBox({type, outputs}) {
             
             <div className="output-box">
                 <div className="tab-group">
-                    <StorageTab id="summary-tab" fill="Summary" />
-                    <StorageTab id="keypoints-tab" fill="Key Points" />
-                    <StorageTab id="quiz-tab" fill="Quiz" />
-                    <StorageTab id="beginner-tab" fill="Explanation (Beginner)" />
-                    <StorageTab id="intermediate-tab" fill="Explanation (Intermediate)" />
-                    <StorageTab id="advanced-tab" fill="Explanation (Advanced)" />
+                    <StorageTab active={activeTabs.summary} hidden={hiddenTabs.summary} fill="Summary" />
+                    <StorageTab active={activeTabs.keypoints} hidden={hiddenTabs.keypoints} fill="Key Points" />
+                    <StorageTab active={activeTabs.quiz} hidden={hiddenTabs.quiz} fill="Quiz" />
+                    <StorageTab active={activeTabs.beginner} hidden={hiddenTabs.beginner} fill="Explanation (Beginner)" />
+                    <StorageTab active={activeTabs.intermediate} hidden={hiddenTabs.intermediate} fill="Explanation (Intermediate)" />
+                    <StorageTab active={activeTabs.advanced} hidden={hiddenTabs.advanced} fill="Explanation (Advanced)" />
                 </div>
 
                 <div className="panel-group">
-                    <StoragePanel id="summary-panel" value={outputs.summary} />
-                    <StoragePanel id="keypoints-panel" value={outputs.keypoints} />
-                    <StoragePanel id="quiz-panel" value={outputs.quiz} />
-                    <StoragePanel id="beginner-panel" value={outputs.beginner} />
-                    <StoragePanel id="intermediate-panel" value={outputs.intermediate} />
-                    <StoragePanel id="advanced-panel" value={outputs.advanced} />
+                    <StoragePanel value={outputs.summary} hidden={hiddenPanels.summary} />
+                    <StoragePanel value={outputs.keypoints} hidden={hiddenPanels.keypoints} />
+                    <StoragePanel value={outputs.quiz} hidden={hiddenPanels.quiz} />
+                    <StoragePanel value={outputs.beginner} hidden={hiddenPanels.beginner} />
+                    <StoragePanel value={outputs.intermediate} hidden={hiddenPanels.intermediate} />
+                    <StoragePanel value={outputs.advanced} hidden={hiddenPanels.advanced} />
                 </div>
             </div>
 

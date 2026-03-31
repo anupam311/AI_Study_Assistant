@@ -14,7 +14,7 @@ function OutputBox({type, outputs}) {
                 disabled></textarea>
             </div>
             
-            <div className="output-box" hidden>
+            <div className="output-box">
                 <div className="tab-group">
                     <StorageTab id="summary-tab" fill="Summary" />
                     <StorageTab id="keypoints-tab" fill="Key Points" />

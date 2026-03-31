@@ -2,7 +2,7 @@ import { useState } from "react"
 import ActionButton from "./ActionButtons"
 import { get_output } from "../services/aiService";
 
-function InputBox({setType, setOutputs}) {
+function InputBox({setType, setOutputs, setHidden}) {
     
     const [notes, setNotes] = useState("");
     const [level, setLevel] = useState("beginner");
@@ -17,11 +17,13 @@ function InputBox({setType, setOutputs}) {
             return;
         };
 
+        setHidden(false);
         const result = await get_output(notes, type);
         setOutputs(prev => ({
             ...prev,
             [type]: result
         }));
+        setHidden(true);
         setType(type)
             
     }

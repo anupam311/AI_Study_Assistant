@@ -1,7 +1,16 @@
+import { marked } from "marked";
+
 function StoragePanel(props){
+
+    const htmlContent = marked(props.value || "");
+
     return(
-        <textarea className="panels" id={props.id} value={props.value} disabled></textarea>
-    )
+        <div
+            className="panels" 
+            id={props.id}
+            dangerouslySetInnerHTML={{ __html: htmlContent}} 
+            />
+    );
 }
 
 export default StoragePanel

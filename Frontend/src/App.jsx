@@ -1,10 +1,12 @@
 import InputBox from "./components/Inputbox"
 import OutputBox from "./components/Outputbox";
+import LoadingMessage from "./components/LoadingMessage";
 import { useState } from "react";
 
 function App(){
 
     const [type, setType] = useState("");
+    const [hidden, setHidden] = useState(true);
 
     const [outputs, setOutputs] = useState({
         summary:"",
@@ -17,7 +19,8 @@ function App(){
 
     return(
         <div className="container">
-            <InputBox setType={setType} setOutputs={setOutputs} />
+            <LoadingMessage hidden={hidden} />
+            <InputBox setType={setType} setOutputs={setOutputs} setHidden={setHidden} />
             <OutputBox type={type} outputs={outputs} />
         </div>
     );

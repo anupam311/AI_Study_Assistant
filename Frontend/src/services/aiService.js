@@ -9,5 +9,6 @@ export async function get_output(notes, type) {
     body: JSON.stringify({text: notes, type: type}),
   });
 
-  return response.json();
+  let data = await response.json();
+  return data.result;
 }

@@ -11,15 +11,16 @@ function InputBox({setType, setOutputs}) {
         setLevel(value)
     }
 
-    function handleOutputGeneration(type) {
+    async function handleOutputGeneration(type) {
         if (!notes.trim()) {
             alert("Please enter some notes first");
             return;
         };
 
+        const result = await get_output(notes, type);
         setOutputs(prev => ({
             ...prev,
-            [type]: get_output(notes, type)
+            [type]: result
         }));
         setType(type)
             

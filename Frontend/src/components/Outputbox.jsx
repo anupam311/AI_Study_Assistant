@@ -1,7 +1,8 @@
 import StorageTab from "./StorageTab";
 import StoragePanel from "./StoragePanel";
 
-function OutputBox() {
+function OutputBox({type, outputs}) {
+
     return(
         <div className="box">
             <div className="heading">
@@ -24,12 +25,12 @@ function OutputBox() {
                 </div>
 
                 <div className="panel-group">
-                    <StoragePanel id="summary-panel" />
-                    <StoragePanel id="keypoints-panel" />
-                    <StoragePanel id="quiz-panel" />
-                    <StoragePanel id="beginner-panel" />
-                    <StoragePanel id="intermediate-panel" />
-                    <StoragePanel id="advanced-panel" />
+                    <StoragePanel id="summary-panel" value={outputs.summary} />
+                    <StoragePanel id="keypoints-panel" value={outputs.keypoints} />
+                    <StoragePanel id="quiz-panel" value={outputs.quiz} />
+                    <StoragePanel id="beginner-panel" value={outputs.beginner} />
+                    <StoragePanel id="intermediate-panel" value={outputs.intermediate} />
+                    <StoragePanel id="advanced-panel" value={outputs.advanced} />
                 </div>
             </div>
 

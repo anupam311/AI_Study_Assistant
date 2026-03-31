@@ -1,6 +1,6 @@
 function StoragePanel(props){
     return(
-        <textarea className="panels" id={props.id} disabled></textarea>
+        <textarea className="panels" id={props.id} value={props.value} disabled></textarea>
     )
 }
 

@@ -2,11 +2,10 @@ import { useState } from "react"
 import ActionButton from "./ActionButtons"
 import { get_output } from "../services/aiService";
 
-function InputBox(){
+function InputBox({setType, setOutputs}) {
     
     const [notes, setNotes] = useState("");
     const [level, setLevel] = useState("beginner");
-    const [output, setOutput] = useState("");
 
     function handleLevelChange(value) {
         setLevel(value)
@@ -16,9 +15,13 @@ function InputBox(){
         if (!notes.trim()) {
             alert("Please enter some notes first");
             return;
-        }
+        };
 
-        setOutput(get_output(notes, type));
+        setOutputs(prev => ({
+            ...prev,
+            [type]: get_output(notes, type)
+        }));
+        setType(type)
             
     }
 

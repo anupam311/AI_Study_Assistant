@@ -1,5 +1,6 @@
 import StorageTab from "./StorageTab";
 import StoragePanel from "./StoragePanel";
+import OutputBoxHeading from "./OutputBoxHeading";
 import { useState, useEffect } from "react";
 
 function OutputBox({type, outputs}) {
@@ -22,7 +23,7 @@ function OutputBox({type, outputs}) {
             advanced: true,
         });
 
-    const [activeTabs, setActiveTabs] = useState({
+    const [activeTab, setActiveTab] = useState({
             summary: false,
             keypoints: false,
             quiz: false,
@@ -31,7 +32,7 @@ function OutputBox({type, outputs}) {
             advanced: false,
         });
 
-    useEffect(() => {
+    function handle_ActiveTab_HiddenPanels(type) {
         setHiddenPanels({
             summary: true,
             keypoints: true,
@@ -46,12 +47,7 @@ function OutputBox({type, outputs}) {
             [type]: false
         }));
 
-        setHiddenTabs(prev => ({
-            ...prev,
-            [type]: false
-        }));
-
-        setActiveTabs({
+        setActiveTab({
             summary: false,
             keypoints: false,
             quiz: false,
@@ -60,32 +56,35 @@ function OutputBox({type, outputs}) {
             advanced: false
         });
 
-        setActiveTabs(prev => ({
+        setActiveTab(prev => ({
             ...prev,
             [type]: true
+        }));
+    }
+
+    useEffect(() => {
+
+        handle_ActiveTab_HiddenPanels(type);
+
+        setHiddenTabs(prev => ({
+            ...prev,
+            [type]: false
         }));
 
     }, [type])
 
     return(
         <div className="box">
-            <div className="heading">
-                <h2>Output Box</h2>
-
-                <textarea 
-                className="output" 
-                placeholder="Output Will Appear here"
-                disabled></textarea>
-            </div>
+            <OutputBoxHeading hidden={!!type} />
             
             <div className="output-box">
                 <div className="tab-group">
-                    <StorageTab active={activeTabs.summary} hidden={hiddenTabs.summary} fill="Summary" />
-                    <StorageTab active={activeTabs.keypoints} hidden={hiddenTabs.keypoints} fill="Key Points" />
-                    <StorageTab active={activeTabs.quiz} hidden={hiddenTabs.quiz} fill="Quiz" />
-                    <StorageTab active={activeTabs.beginner} hidden={hiddenTabs.beginner} fill="Explanation (Beginner)" />
-                    <StorageTab active={activeTabs.intermediate} hidden={hiddenTabs.intermediate} fill="Explanation (Intermediate)" />
-                    <StorageTab active={activeTabs.advanced} hidden={hiddenTabs.advanced} fill="Explanation (Advanced)" />
+                    <StorageTab active={activeTab.summary} hidden={hiddenTabs.summary} fill="Summary" onClickAction={() => {handle_ActiveTab_HiddenPanels("summary")}} />
+                    <StorageTab active={activeTab.keypoints} hidden={hiddenTabs.keypoints} fill="Key Points" onClickAction={() => {handle_ActiveTab_HiddenPanels("keypoints")}} />
+                    <StorageTab active={activeTab.quiz} hidden={hiddenTabs.quiz} fill="Quiz" onClickAction={() => {handle_ActiveTab_HiddenPanels("quiz")}} />
+                    <StorageTab active={activeTab.beginner} hidden={hiddenTabs.beginner} fill="Explanation (Beginner)" onClickAction={() => {handle_ActiveTab_HiddenPanels("beginner")}} />
+                    <StorageTab active={activeTab.intermediate} hidden={hiddenTabs.intermediate} fill="Explanation (Intermediate)" onClickAction={() => {handle_ActiveTab_HiddenPanels("intermediate")}} />
+                    <StorageTab active={activeTab.advanced} hidden={hiddenTabs.advanced} fill="Explanation (Advanced)" onClickAction={() => {handle_ActiveTab_HiddenPanels("advanced")}} />
                 </div>
 
                 <div className="panel-group">

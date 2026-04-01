@@ -4,12 +4,12 @@ function StorageTab(props){
 
     if (props.active) {
         return(
-            <button className="tabs active" id={props.id}>{props.fill}</button>
+            <button className="tabs active" >{props.fill}</button>
         )
     }
 
     return(
-        <button className="tabs" id={props.id}>{props.fill}</button>
+        <button className="tabs" onClick={props.onClickAction}>{props.fill}</button>
     )
 }
 

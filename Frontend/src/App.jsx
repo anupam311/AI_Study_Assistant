@@ -20,7 +20,7 @@ function App(){
     return(
         <div className="container">
             <LoadingMessage hidden={hidden} />
-            <InputBox setType={setType} setOutputs={setOutputs} setHidden={setHidden} />
+            <InputBox setType={setType} setOutputs={setOutputs} setHidden={setHidden} outputs={outputs} />
             <OutputBox type={type} outputs={outputs} />
         </div>
     );

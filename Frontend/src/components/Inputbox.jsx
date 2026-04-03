@@ -2,10 +2,14 @@ import { useState } from "react"
 import ActionButton from "./ActionButtons"
 import { get_output } from "../services/aiService";
 
-function InputBox({setType, setOutputs, setHidden}) {
+function InputBox({setType, setOutputs, setHidden, outputs}) {
     
     const [notes, setNotes] = useState("");
     const [level, setLevel] = useState("beginner");
+    const explainDisabled =
+        outputs.beginner &&
+        outputs.intermediate &&
+        outputs.advanced;
 
     function handleLevelChange(value) {
         setLevel(value)
@@ -31,6 +35,10 @@ function InputBox({setType, setOutputs, setHidden}) {
 
     function handleActionClick(type) {
         handleOutputGeneration(type);
+        setActiveButton(prev => ({
+            ...prev,
+            [type]: false
+        }));
     }
 
     return(
@@ -40,9 +48,9 @@ function InputBox({setType, setOutputs, setHidden}) {
             <textarea className="notes" placeholder="Paste your notes here" value={notes} onChange={(e) => setNotes(e.target.value)}></textarea>
 
             <div className="controls">
-                <ActionButton type="summary" fill="Generate Summary" onClickAction={handleActionClick} />
-                <ActionButton type="keypoints" fill="Key Points" onClickAction={handleActionClick} />
-                <ActionButton type="quiz" fill="Generate Quiz" onClickAction={handleActionClick} />
+                <ActionButton type="summary" fill="Generate Summary" onClickAction={handleActionClick} disabled={!!outputs.summary} />
+                <ActionButton type="keypoints" fill="Key Points" onClickAction={handleActionClick} disabled={!!outputs.keypoints} />
+                <ActionButton type="quiz" fill="Generate Quiz" onClickAction={handleActionClick} disabled={!!outputs.quiz} />
 
                 <div className="explain-control">
                     <select className="level-select" onChange={(e) => handleLevelChange(e.target.value)}>
@@ -51,7 +59,7 @@ function InputBox({setType, setOutputs, setHidden}) {
                         <option value="advanced">Advanced</option>
                     </select>
 
-                    <ActionButton type={level} fill="Explain" onClickAction={handleActionClick} />
+                    <ActionButton type={level} fill="Explain" onClickAction={handleActionClick} disabled={explainDisabled} />
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
-import StorageTab from "./StorageTab";
-import StoragePanel from "./StoragePanel";
-import OutputBoxHeading from "./OutputBoxHeading";
+import StorageTab from "../StorageTab";
+import StoragePanel from "../StoragePanel";
+import OutputBoxHeading from "../OutputBoxHeading";
 import { useState, useEffect } from "react";
 
 function OutputBox({type, outputs}) {

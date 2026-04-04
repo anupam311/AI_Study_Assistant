@@ -1,6 +1,6 @@
 import { useState } from "react"
-import ActionButton from "./ActionButtons"
-import { get_output } from "../services/aiService";
+import ActionButton from "../ActionButtons"
+import { get_output } from "../../services/aiService";
 
 function InputBox({setType, setOutputs, setLoading, setError, outputs}) {
     

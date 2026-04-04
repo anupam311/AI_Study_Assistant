@@ -3,7 +3,7 @@ import StoragePanel from "./StoragePanel";
 import OutputBoxHeading from "./OutputBoxHeading";
 import { useState, useEffect } from "react";
 
-function OutputBox({type, outputs}) {
+function OutputBox({type, outputs, isStale}) {
 
     const TABS = {
         summary: "Summary",
@@ -23,6 +23,12 @@ function OutputBox({type, outputs}) {
     return(
         <div className="box">
             <OutputBoxHeading hidden={!!type} />
+
+            {isStale && type && (
+                <div className="stale-warning">
+                    ⚠️ Notes changed. Output may be outdated.
+                </div>
+            )}
             
             <div className="output-box">
                 <div className="tab-group">

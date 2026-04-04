@@ -9,6 +9,7 @@ function App(){
     const [type, setType] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [isStale, setIsStale] = useState(false);
 
     const [outputs, setOutputs] = useState({
         summary:"",
@@ -23,8 +24,8 @@ function App(){
         <div className="container">
             <ErrorToast error={error} setError={setError} />
             <LoadingMessage loading={loading} />
-            <InputBox setType={setType} setOutputs={setOutputs} setLoading={setLoading} setError={setError} outputs={outputs} />
-            <OutputBox type={type} outputs={outputs} />
+            <InputBox setType={setType} setOutputs={setOutputs} setLoading={setLoading} setError={setError} setIsStale={setIsStale} isStale={isStale} outputs={outputs} />
+            <OutputBox type={type} outputs={outputs} isStale={isStale} />
         </div>
     );
 }

@@ -2,7 +2,7 @@ import { marked } from "marked";
 
 function StoragePanel({ value }){
     
-    const htmlContent = marked(value || "");
+    const htmlContent = marked.parse(value || "");
 
     return(
         <div

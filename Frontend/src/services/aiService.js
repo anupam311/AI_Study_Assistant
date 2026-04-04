@@ -2,8 +2,12 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export async function get_output(notes, type) {
 
+  const baseTime = 15000;
+  const extraTime = notes.length * 5;
+  const totalTimeout = baseTime + extraTime;
+
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+  const timeoutId = setTimeout(() => controller.abort(), totalTimeout);
 
   try {
     const response = await fetch(`${API_URL}/generate-output`, {
@@ -27,7 +31,7 @@ export async function get_output(notes, type) {
       throw new Error(errorMessage);
     }
 
-    return await response.json();
+    return (await response.json()).result;
 
   } catch (error) {
     clearTimeout(timeoutId);

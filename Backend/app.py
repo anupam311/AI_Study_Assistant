@@ -11,9 +11,9 @@ def generate_output():
     text = data.get('text')
     output_type = data.get('type')
 
-    summary = ai_response(text, output_type)
+    result = ai_response(text, output_type)
 
-    return jsonify({"result": summary})
+    return jsonify({"result": result})
 
 if __name__ == '__main__':
     app.run(debug=True)

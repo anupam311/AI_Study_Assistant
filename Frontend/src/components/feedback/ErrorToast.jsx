@@ -20,7 +20,7 @@ function ErrorToast({ error, setError }) {
         }, 3000);
 
         return () => {
-            clearInterval(showTimer);
+            clearTimeout(showTimer);
             clearTimeout(fadeOutTimer);
             clearTimeout(removeTimer);
         };

@@ -1,8 +1,8 @@
 import InputBox from "./components/input/Inputbox"
 import OutputBox from "./components/output/Outputbox";
 import LoadingMessage from "./components/feedback/LoadingMessage";
-import { useState } from "react";
 import ErrorToast from "./components/feedback/ErrorToast";
+import { useState } from "react";
 
 function App(){
 

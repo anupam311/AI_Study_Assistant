@@ -1,15 +1,12 @@
 import { marked } from "marked";
 
-function StoragePanel(props){
-
-    if(props.hidden) return null;
+function StoragePanel({ value }){
     
-    const htmlContent = marked(props.value || "");
+    const htmlContent = marked(value || "");
 
     return(
         <div
             className="panels" 
-            id={props.id}
             dangerouslySetInnerHTML={{ __html: htmlContent}} 
             />
     );

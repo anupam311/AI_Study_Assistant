@@ -1,15 +1,11 @@
-function StorageTab(props){
-
-    if (props.hidden) return null;
-
-    if (props.active) {
-        return(
-            <button className="tabs active" >{props.fill}</button>
-        )
-    }
-
+function StorageTab({  active, fill, onClickAction }) {
     return(
-        <button className="tabs" onClick={props.onClickAction}>{props.fill}</button>
+        <button 
+            className={`tabs ${active ? "active" : ""}`} 
+            onClick={!active ? onClickAction : undefined}
+        >
+            {fill}
+        </button>
     )
 }
 

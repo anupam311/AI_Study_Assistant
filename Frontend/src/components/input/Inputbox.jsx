@@ -1,5 +1,5 @@
 import { useState } from "react"
-import ActionButton from "../ActionButtons"
+import ActionButton from "./ActionButtons"
 import { get_output } from "../../services/aiService";
 
 function InputBox({setType, setOutputs, setLoading, setError, outputs}) {
@@ -11,6 +11,13 @@ function InputBox({setType, setOutputs, setLoading, setError, outputs}) {
         outputs.beginner &&
         outputs.intermediate &&
         outputs.advanced;
+
+    const errorMessages = {
+        RATE_LIMIT: "Daily limit reached. Please try again tomorrow.",
+        SERVER_DOWN: "Server is currently down. Please try again later.",
+        TIMEOUT: "Request took too long. Please try again.",
+        NETWORK_ERROR: "Network error. Please check your connection."
+    };
 
     function handleLevelChange(value) {
         setLevel(value)
@@ -36,37 +43,12 @@ function InputBox({setType, setOutputs, setLoading, setError, outputs}) {
 
         } catch (error) {
             
-            switch (error.message) {
-                case "RATE_LIMIT":
-                    setError("Daily limit reached. Please try again tomorrow.");
-                    break;
-
-                case "SERVER_DOWN":
-                    setError("Server is currently down. Please try again later.");
-                    break;
-
-                case "TIMEOUT":
-                    setError("Request took too long. Please try again.");
-                    break;
-
-                case "NETWORK_ERROR":
-                    setError("Network error. Please check your connection and try again.");
-                    break;
-
-                default:
-                    setError("An unexpected error occurred. Please try again.");
-            }
-
+            setError(errorMessages[error.message] || "An unexpected error occurred. Please try again.");
             console.error("Error generating output:", error);
 
         } finally {
             setLoading(false);
         }
-    }
-
-
-    function handleActionClick(type) {
-        handleOutputGeneration(type);
     }
 
     return(
@@ -76,9 +58,9 @@ function InputBox({setType, setOutputs, setLoading, setError, outputs}) {
             <textarea className="notes" placeholder="Paste your notes here" value={notes} onChange={(e) => setNotes(e.target.value)}></textarea>
 
             <div className="controls">
-                <ActionButton type="summary" fill="Generate Summary" onClickAction={handleActionClick} disabled={!!outputs.summary} />
-                <ActionButton type="keypoints" fill="Key Points" onClickAction={handleActionClick} disabled={!!outputs.keypoints} />
-                <ActionButton type="quiz" fill="Generate Quiz" onClickAction={handleActionClick} disabled={!!outputs.quiz} />
+                <ActionButton type="summary" fill="Generate Summary" onClickAction={handleOutputGeneration} disabled={!!outputs.summary} />
+                <ActionButton type="keypoints" fill="Key Points" onClickAction={handleOutputGeneration} disabled={!!outputs.keypoints} />
+                <ActionButton type="quiz" fill="Generate Quiz" onClickAction={handleOutputGeneration} disabled={!!outputs.quiz} />
 
                 <div className="explain-control">
                     <select className="level-select" onChange={(e) => handleLevelChange(e.target.value)}>
@@ -87,7 +69,7 @@ function InputBox({setType, setOutputs, setLoading, setError, outputs}) {
                         <option value="advanced">Advanced</option>
                     </select>
 
-                    <ActionButton type={level} fill="Explain" onClickAction={handleActionClick} disabled={explainDisabled} />
+                    <ActionButton type={level} fill="Explain" onClickAction={handleOutputGeneration} disabled={explainDisabled} />
                 </div>
             </div>
         </div>

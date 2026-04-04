@@ -1,8 +1,6 @@
 function LoadingMessage({ loading }) {
 
-    if (!loading) {
-        return null;
-    }
+    if (!loading) return null;
 
     return (
         <div className="loading-message">

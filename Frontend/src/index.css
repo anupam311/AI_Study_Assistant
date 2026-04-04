@@ -186,6 +186,16 @@ button:disabled:hover {
    OUTPUT PANEL
 ========================= */
 
+.stale-warning {
+    background: #fff3cd;
+    color: #856404;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    border: 1px solid #ffeeba;
+}
+
 .panel-wrapper {
     position: relative;
 }
@@ -252,8 +262,9 @@ button:disabled:hover {
     font-size: 16px;
     font-weight: 600;
     color: white;
-    background-color: #43a047;
+    background-color: #4CAF50;
     border-radius: 10px;
+    border: 2px solid #43a047;
     position: fixed;
     top: 20px;
     right: 20px;

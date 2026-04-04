@@ -1,6 +1,6 @@
-function LoadingMessage({ hidden }) {
+function LoadingMessage({ loading }) {
 
-    if (hidden) {
+    if (!loading) {
         return null;
     }
 

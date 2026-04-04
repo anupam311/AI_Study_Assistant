@@ -2,10 +2,11 @@ import { useState } from "react"
 import ActionButton from "./ActionButtons"
 import { get_output } from "../services/aiService";
 
-function InputBox({setType, setOutputs, setHidden, outputs}) {
+function InputBox({setType, setOutputs, setLoading, setError, outputs}) {
     
     const [notes, setNotes] = useState("");
     const [level, setLevel] = useState("beginner");
+
     const explainDisabled =
         outputs.beginner &&
         outputs.intermediate &&
@@ -17,28 +18,55 @@ function InputBox({setType, setOutputs, setHidden, outputs}) {
 
     async function handleOutputGeneration(type) {
         if (!notes.trim()) {
-            alert("Please enter some notes first");
+            setError("Please enter some notes first");
             return;
         };
 
-        setHidden(false);
-        const result = await get_output(notes, type);
-        setOutputs(prev => ({
-            ...prev,
-            [type]: result
-        }));
-        setHidden(true);
-        setType(type)
+        try {
+            setError("");
+            setLoading(true);
+
+            const result = await get_output(notes, type);
+            setOutputs(prev => ({
+                ...prev,
+                [type]: result
+            }));
+
+            setType(type)
+
+        } catch (error) {
             
+            switch (error.message) {
+                case "RATE_LIMIT":
+                    setError("Daily limit reached. Please try again tomorrow.");
+                    break;
+
+                case "SERVER_DOWN":
+                    setError("Server is currently down. Please try again later.");
+                    break;
+
+                case "TIMEOUT":
+                    setError("Request took too long. Please try again.");
+                    break;
+
+                case "NETWORK_ERROR":
+                    setError("Network error. Please check your connection and try again.");
+                    break;
+
+                default:
+                    setError("An unexpected error occurred. Please try again.");
+            }
+
+            console.error("Error generating output:", error);
+
+        } finally {
+            setLoading(false);
+        }
     }
 
 
     function handleActionClick(type) {
         handleOutputGeneration(type);
-        setActiveButton(prev => ({
-            ...prev,
-            [type]: false
-        }));
     }
 
     return(

@@ -1,5 +1,3 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
 export async function get_output(notes, type) {
 
   const baseTime = 15000;
@@ -10,7 +8,7 @@ export async function get_output(notes, type) {
   const timeoutId = setTimeout(() => controller.abort(), totalTimeout);
 
   try {
-    const response = await fetch(`${API_URL}/generate-output`, {
+    const response = await fetch("generate-output", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

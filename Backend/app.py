@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from AI_control import ai_response
+from .AI_control import ai_response
 import os
 
 app = Flask(

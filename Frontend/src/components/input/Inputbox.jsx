@@ -17,6 +17,7 @@ function InputBox({setType, setOutputs, setLoading, setError, setIsStale, isStal
         RATE_LIMIT: "Daily limit reached. Please try again tomorrow.",
         SERVER_DOWN: "Server is currently down. Please try again later.",
         TIMEOUT: "Request took too long. Please try again.",
+        AI_UNAVAILABLE: "AI services are currently unavailable. Please try again later.",
         NETWORK_ERROR: "Network error. Please check your connection."
     };
 
@@ -48,11 +49,14 @@ function InputBox({setType, setOutputs, setLoading, setError, setIsStale, isStal
             setError("");
             setLoading(true);
 
-            const result = await get_output(notes, type);
+            const response = await get_output(notes, type);
             setOutputs(prev => ({
                 ...prev,
-                [type]: result
+                [type]: response.result
             }));
+            console.log(
+                `[AI DEBUG] Provider: ${response.provider} | Fallback: ${response.fallback_used}`
+            );
 
             setType(type)
 

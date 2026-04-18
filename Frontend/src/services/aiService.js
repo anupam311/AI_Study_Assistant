@@ -8,7 +8,7 @@ export async function get_output(notes, type) {
   const timeoutId = setTimeout(() => controller.abort(), totalTimeout);
 
   try {
-    const response = await fetch("generate-output", {
+    const response = await fetch("/generate-output", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,22 +17,30 @@ export async function get_output(notes, type) {
       signal: controller.signal
     });
 
-    clearTimeout(timeoutId);
+    let data = {};
+    try {
+      data = await response.json();
+    } catch {
+      data = {};
+    }
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({})); 
-      const errorMessage = errorData.error || "SERVER_ERROR";
+      const errorMessage = data.error || "SERVER_ERROR";
 
       if (response.status === 429) throw new Error("RATE_LIMIT");
+      if (response.status === 503) throw new Error("AI_UNAVAILABLE");
       if (response.status >= 500) throw new Error("SERVER_DOWN");
 
       throw new Error(errorMessage);
     }
 
-    return (await response.json()).result;
+    return {
+      result: data.result,
+      provider: data.provider || "",
+      fallback_used: data.fallback_used || false,
+    };
 
   } catch (error) {
-    clearTimeout(timeoutId);
 
     if (error.name === "AbortError") {
       console.error("Request timed out");
@@ -46,5 +54,7 @@ export async function get_output(notes, type) {
 
     throw error;
 
+  } finally {
+    clearTimeout(timeoutId);
   }
 }

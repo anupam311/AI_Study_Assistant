@@ -1,94 +1,167 @@
-from google import genai
 from dotenv import load_dotenv
+from google import genai
+from groq import Groq
 import os
 
-# Configuring genai
 load_dotenv()
 
-api_key = os.getenv("GEMINI_API_KEY")
-if not api_key:
+# -------- API Clients --------
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+groq_api_key = os.getenv("GROQ_API_KEY")
+
+if not gemini_api_key:
     raise ValueError("GEMINI_API_KEY not set")
 
-client = genai.Client(api_key=api_key)
+if not groq_api_key:
+    raise ValueError("GROQ_API_KEY not set")
 
-rules = """
-- Leave a blank line between paragraphs
-- Use bullet points where needed
-- Use headings (##) for sections
-- Do NOT write everything in one block
-- Highlight text wherever necessary"""
+gemini_client = genai.Client(api_key=gemini_api_key)
+groq_client = Groq(api_key=groq_api_key)
 
-quiz_rules = """
-- For questions, write the options in next line and leave a blank line betwwen each options, questions and answers."""
+# -------- Shared rules --------
+COMMON_RULES = """
+    - Leave a blank line between paragraphs.
+    - Use bullet points where needed.
+    - Use headings with ## where useful.
+    - Do NOT write everything in one large block.
+    - Make the output easy for a student to revise quickly.
+    - Keep the language clear and readable.
+    """
 
-# Creating AI response
+QUIZ_RULES = """
+    - Generate well-formatted quiz questions.
+    - Put options on separate lines.
+    - Leave a blank line between question, options, and answer.
+    - Include the correct answer clearly at the end of each question.
+    """
 
-def ai_response(text, output_type):
+EXPLAIN_RULES = """
+    - Explain step by step.
+    - Use simple wording when needed.
+    - Use examples where useful.
+    - Keep the structure clean and readable.
+    """
 
-    if output_type == 'summary':
 
-        prompt = f"""
-            Summarize the following study notes in a clear and concise way.
-        
+def build_prompt(text, output_type,):
+    text = text.strip()
+
+    if output_type == "summary":
+        return f"""
+            Summarize the following study notes.
+
             Rules:
-            - Use short paragraphs or bullet points.
-            - Keep the most important ideas.
+            {COMMON_RULES}
+            - Focus only on the most important ideas.
             - Avoid unnecessary details.
-            - Make it easy for a student to quickly revise.
-            {rules}
 
             Notes:
-            {text}"""
-    
-    elif output_type == 'keypoints':
+            {text}
+            """.strip()
 
-        prompt = f"""
-            Extract the most important key points from the following notes.
+    elif output_type == "keypoints":
+        return f"""
+            Extract the key points from the following study notes.
 
             Rules:
-            - Present the output as bullet points.
-            - Each point should be short and clear.
-            - Focus only on the most important concepts.
-            {rules}
+            {COMMON_RULES}
+            - Use crisp bullet points.
+            - Do not turn it into long paragraphs.
 
             Notes:
-            {text}"""
+            {text}
+            """.strip()
 
     elif output_type == "quiz":
-
-        prompt = f"""
-            Generate a short quiz based on the following notes.
-
-            Rules:
-            - Create 5 multiple choice questions.
-            - Each question must have 4 options (A, B, C, D).
-            - Mark the correct answer clearly.
-            - Questions should test understanding, not memorization.
-            {rules}
-            {quiz_rules}
-
-            Notes:
-            {text}"""
-
-    else :
-
-        prompt = f"""
-            Explain the following study notes.
-
-            Explanation level: {output_type}
+        return f"""
+            Create a quiz from the following study notes.
 
             Rules:
-            - Beginner: use very simple language and examples.
-            - Intermediate: moderate technical explanation.
-            - Advanced: deep technical explanation with detailed concepts.
-            {rules}
+            {COMMON_RULES}
+            {QUIZ_RULES}
+            - Make the questions useful for revision.
+            - Prefer conceptual questions over trivial memorization.
 
             Notes:
-            {text}"""
+            {text}
+            """.strip()
 
-    response = client.models.generate_content(
+    else:
+        return f"""
+            Explain the following study notes for a {output_type} student.
+
+            Rules:
+            {COMMON_RULES}
+            {EXPLAIN_RULES}
+
+            Level:
+            {output_type}
+
+            Notes:
+            {text}
+            """.strip()
+
+
+def generate_with_gemini(prompt):
+    response = gemini_client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
     )
 
-    return response.text
+    if not getattr(response, "text", None):
+        raise ValueError("Gemini returned an empty response")
+
+    return response.text.strip()
+
+
+def generate_with_groq(prompt):
+    response = groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful academic study assistant. Format answers clearly."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.4
+    )
+
+    content = response.choices[0].message.content
+
+    if not content:
+        raise ValueError("Groq returned an empty response")
+
+    return content.strip()
+
+
+def ai_response(text, output_type):
+    prompt = build_prompt(text, output_type)
+
+    try:
+        result = generate_with_gemini(prompt)
+        return {
+            "result": result,
+            "provider": "gemini",
+            "fallback_used": False
+        }
+
+    except Exception as gemini_error:
+        print("Gemini failed:", gemini_error)
+
+        try:
+            result = generate_with_groq(prompt)
+            return {
+                "result": result,
+                "provider": "groq",
+                "fallback_used": True
+            }
+
+        except Exception as groq_error:
+            print("Groq failed:", groq_error)
+            raise RuntimeError(
+                f"Both providers failed. Gemini: {gemini_error} | Groq: {groq_error}"
+            )
